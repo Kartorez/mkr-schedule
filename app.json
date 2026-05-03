@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "mkr-schedule",
+    "name": "MKR Розклад",
     "slug": "mkr-schedule",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,9 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kartorez.mkrschedule"
     },
     "android": {
+      "package": "com.kartorez.mkrschedule",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
