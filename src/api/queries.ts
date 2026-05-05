@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { api, ApiItem } from './index';
 
 export const queryKeys = {
@@ -104,6 +104,7 @@ export function useGroupSchedule(
       course !== undefined &&
       groupId !== undefined,
     staleTime: 1000 * 60 * 5,
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -119,6 +120,7 @@ export function useTeacherSchedule(
     queryFn: () => api.teacherSchedule(structureId!, chairId!, teacherId!, startDate, endDate),
     enabled: structureId !== undefined && chairId !== undefined && teacherId !== undefined,
     staleTime: 1000 * 60 * 5,
+    placeholderData: keepPreviousData,
   });
 }
 

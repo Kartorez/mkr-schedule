@@ -1,4 +1,5 @@
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -15,6 +16,7 @@ type Field = 'university' | 'chair' | 'teacher';
 
 export function TeacherSetupScreen() {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation<Nav>();
   const styles = makeStyles(colors);
 
@@ -163,7 +165,7 @@ export function TeacherSetupScreen() {
         )}
       </ScrollView>
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 20) }]}>
         <TouchableOpacity
           style={[styles.submitBtn, !canProceed && styles.submitBtnDisabled]}
           activeOpacity={canProceed ? 0.85 : 1}

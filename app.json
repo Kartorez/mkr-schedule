@@ -27,6 +27,18 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "637b2997-b953-4b18-9053-0f0a19133606"
+      }
+    },
+    "owner": "kartorez",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/637b2997-b953-4b18-9053-0f0a19133606"
     }
   }
 }

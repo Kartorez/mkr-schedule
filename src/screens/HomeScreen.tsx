@@ -26,7 +26,7 @@ export function HomeScreen() {
 
   const [setup, setSetup] = useState<SetupData | null>(null);
   const [startDate, setStartDate] = useState<Date>(() => new Date());
-  const [endDate, setEndDate] = useState<Date>(() => addWeeks(new Date(), 2));
+  const [endDate, setEndDate] = useState<Date>(() => addMonths(new Date(), 1));
   const [selectedItem, setSelectedItem] = useState<ScheduleItem | null>(null);
 
   useEffect(() => {
@@ -55,7 +55,6 @@ export function HomeScreen() {
   );
 
   const { data: allTeachers = [] } = useAllTeachers();
-
   const query = isStudent ? groupQuery : teacherQuery;
   const scheduleItems = query.data || [];
   const isLoading = query.isLoading || !setup;
@@ -78,13 +77,14 @@ export function HomeScreen() {
     return new Date(isoStr);
   };
 
-  const groupedItems = useMemo(() => {
-    const groups: { date: Date; items: ScheduleItem[] }[] = [];
+  const { groupedItems, actualRange } = useMemo(() => {
+    if (scheduleItems.length === 0) return { groupedItems: [], actualRange: null };
 
     const sorted = [...scheduleItems].sort(
       (a, b) => parseApiDate(a.start).getTime() - parseApiDate(b.start).getTime(),
     );
 
+    const groups: { date: Date; items: ScheduleItem[] }[] = [];
     sorted.forEach((item) => {
       const itemDate = parseApiDate(item.start);
       let group = groups.find(
@@ -100,19 +100,45 @@ export function HomeScreen() {
       group.items.push(item);
     });
 
-    return groups;
+    return {
+      groupedItems: groups,
+      actualRange: {
+        start: parseApiDate(sorted[0].start),
+        end: parseApiDate(sorted[sorted.length - 1].end),
+      },
+    };
   }, [scheduleItems]);
 
+  const hasMorePast = useMemo(() => {
+    if (!actualRange || isLoading) return true;
+    // Якщо найперша пара пізніше, ніж на тиждень від дати початку запиту, 
+    // значить ми вже завантажили все, що було раніше
+    return actualRange.start.getTime() - startDate.getTime() < 1000 * 60 * 60 * 24 * 3;
+  }, [actualRange, startDate, isLoading]);
+
+  const hasMoreFuture = useMemo(() => {
+    if (!actualRange || isLoading) return true;
+    // Аналогічно для майбутнього
+    return endDate.getTime() - actualRange.end.getTime() < 1000 * 60 * 60 * 24 * 3;
+  }, [actualRange, endDate, isLoading]);
+
   function loadPrevious() {
+    if (!hasMorePast) return;
     setStartDate((prev) => subMonths(prev, 1));
   }
 
   function loadNext() {
+    if (!hasMoreFuture) return;
     setEndDate((prev) => addMonths(prev, 1));
   }
 
   const title = isStudent ? setup?.group?.name : setup?.teacher?.name;
   const subtitle = isStudent ? setup?.university.name?.replace('BUZ', 'ВНАУ') : setup?.chair?.name;
+
+  const displayPeriod = useMemo(() => {
+    if (!actualRange) return `${format(startDate, 'dd.MM')} - ${format(endDate, 'dd.MM')}`;
+    return `${format(actualRange.start, 'dd.MM')} - ${format(actualRange.end, 'dd.MM')}`;
+  }, [actualRange, startDate, endDate]);
 
   return (
     <View style={styles.container}>
@@ -122,9 +148,7 @@ export function HomeScreen() {
           <Text style={styles.headerSubtitle}>
             {title} · {subtitle}
           </Text>
-          <Text style={styles.headerSubtitlePeriod}>
-            Період: {format(startDate, 'dd.MM')} - {format(endDate, 'dd.MM')}
-          </Text>
+          <Text style={styles.headerSubtitlePeriod}>Період: {displayPeriod}</Text>
           {query.isError ? (
             <Text style={[styles.headerSubtitlePeriod, { color: colors.error }]}>
               Офлайн (збережена копія)
@@ -154,7 +178,7 @@ export function HomeScreen() {
           />
         }
         ListHeaderComponent={
-          !isLoading || scheduleItems.length > 0 ? (
+          hasMorePast && (!isLoading || scheduleItems.length > 0) ? (
             <TouchableOpacity style={styles.loadMoreBtn} onPress={loadPrevious}>
               <Ionicons name="arrow-up" size={20} color={colors.textSecondary} />
               <Text style={styles.loadMoreText}>Завантажити попередній місяць</Text>
@@ -162,7 +186,7 @@ export function HomeScreen() {
           ) : null
         }
         ListFooterComponent={
-          !isLoading || scheduleItems.length > 0 ? (
+          hasMoreFuture && (!isLoading || scheduleItems.length > 0) ? (
             <TouchableOpacity style={styles.loadMoreBtn} onPress={loadNext}>
               <Ionicons name="arrow-down" size={20} color={colors.textSecondary} />
               <Text style={styles.loadMoreText}>Завантажити наступний місяць</Text>

@@ -25,7 +25,7 @@ export const ScheduleDay = memo(
       <View style={styles.dayGroup}>
         <Text style={[styles.dayTitle, isTodayDate && styles.dayTitleToday]}>
           {isTodayDate && 'СЬОГОДНІ · '}
-          {format(date, 'EE · d MMM', { locale: uk }).toUpperCase()}
+          {format(date, 'EEEEEE · d MMM', { locale: uk }).toUpperCase()}
         </Text>
 
         {items.map((item, index) => (

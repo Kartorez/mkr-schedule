@@ -1,4 +1,5 @@
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -10,6 +11,7 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'RoleSelection'>;
 
 export const SetupDetailsScreen = () => {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation<Nav>();
 
   const styles = makeStyles(colors);
@@ -58,7 +60,7 @@ export const SetupDetailsScreen = () => {
           })}
         </View>
       </View>
-      <View style={styles.buttonContainer}>
+      <View style={[styles.buttonContainer, { paddingBottom: Math.max(insets.bottom, 20) }]}>
         <TouchableOpacity
           style={styles.roleButton}
           onPress={() => {

@@ -23,7 +23,7 @@ TaskManager.defineTask(SCHEDULE_FETCH_TASK, async () => {
 
     const startStr = new Date().toISOString().split('T')[0];
     const end = new Date();
-    end.setDate(end.getDate() + 14);
+    end.setDate(end.getDate() + 30);
     const endStr = end.toISOString().split('T')[0];
 
     if (isStudent && faculty && course) {
