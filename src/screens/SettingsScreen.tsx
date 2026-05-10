@@ -34,7 +34,7 @@ export function SettingsScreen() {
     await setupStore.clear();
     navigation.reset({
       index: 0,
-      // @ts-ignore
+      
       routes: [{ name: 'RoleSelection' }],
     });
   }

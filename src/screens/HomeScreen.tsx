@@ -111,14 +111,11 @@ export function HomeScreen() {
 
   const hasMorePast = useMemo(() => {
     if (!actualRange || isLoading) return true;
-    // Якщо найперша пара пізніше, ніж на тиждень від дати початку запиту, 
-    // значить ми вже завантажили все, що було раніше
     return actualRange.start.getTime() - startDate.getTime() < 1000 * 60 * 60 * 24 * 3;
   }, [actualRange, startDate, isLoading]);
 
   const hasMoreFuture = useMemo(() => {
     if (!actualRange || isLoading) return true;
-    // Аналогічно для майбутнього
     return endDate.getTime() - actualRange.end.getTime() < 1000 * 60 * 60 * 24 * 3;
   }, [actualRange, endDate, isLoading]);
 

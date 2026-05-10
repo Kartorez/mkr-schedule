@@ -42,7 +42,7 @@ export function TeacherSetupScreen() {
     });
     navigation.reset({
       index: 0,
-      // @ts-ignore
+      
       routes: [{ name: 'MainTabs' }],
     });
   }

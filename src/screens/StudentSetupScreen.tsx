@@ -50,7 +50,7 @@ export function StudentSetupScreen() {
     });
     navigation.reset({
       index: 0,
-      // @ts-ignore
+      
       routes: [{ name: 'MainTabs' }],
     });
   }
